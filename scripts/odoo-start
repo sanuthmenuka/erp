@@ -1,13 +1,11 @@
 #!/bin/bash
-cd /workspace
-source /workspace/.venv/bin/activate
+# Start the Odoo dev server. Initialises the DB with `base` on first run.
+# Extra args are passed to odoo-bin, e.g. `odoo-start --dev=all`.
+source "$(dirname "$0")/_lib.sh"
 
-# Check if database is initialized
-DB_INITIALIZED=$(PGPASSWORD=odoo psql -h db -U odoo -d odoo -tAc "SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name='ir_module_module')" 2>/dev/null || echo "f")
-
-if [ "$DB_INITIALIZED" = "t" ]; then
-    python /workspace/odoo/odoo-bin -d odoo --db_host=db --db_user=odoo --db_password=odoo "$@"
+if db_initialized "$DB_NAME"; then
+    odoo -d "$DB_NAME" "$@"
 else
-    echo "Database not initialized. Installing base module..."
-    python /workspace/odoo/odoo-bin -d odoo --db_host=db --db_user=odoo --db_password=odoo -i base "$@"
+    echo "Database '$DB_NAME' not initialised. Installing base..."
+    odoo -d "$DB_NAME" -i base "$@"
 fi

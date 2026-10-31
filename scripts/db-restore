@@ -1,0 +1,43 @@
+#!/bin/bash
+# Restore a snapshot made by db-backup. DESTRUCTIVE for the target DB.
+# Usage: db-restore <backup-dir> [target_db] [--yes]
+# Stop the Odoo server first. Pair with `git checkout <git hash in meta.txt>`
+# (or `git revert`) so code and DB match.
+source "$(dirname "$0")/_lib.sh"
+
+SRC="${1:?usage: db-restore <backup-dir> [target_db] [--yes]}"
+TARGET="$DB_NAME"; YES=""
+for a in "${@:2}"; do
+    case "$a" in --yes) YES=1 ;; *) TARGET="$a" ;; esac
+done
+[ -d "$SRC" ] || SRC="$BACKUP_ROOT/$SRC"
+[ -f "$SRC/odoo.dump" ] || { echo "error: $SRC/odoo.dump not found" >&2; exit 1; }
+
+echo "Restore $SRC -> database '$TARGET'"
+cat "$SRC/meta.txt" 2>/dev/null | sed 's/^/  /'
+if [ -z "$YES" ]; then
+    read -r -p "This DROPS database '$TARGET' and its filestore. Type the DB name to continue: " ans
+    [ "$ans" = "$TARGET" ] || { echo "aborted"; exit 1; }
+fi
+
+if pgrep -f "odoo-bin.*-d $TARGET" >/dev/null 2>&1; then
+    echo "error: an Odoo server is using '$TARGET'. Stop it first." >&2; exit 1
+fi
+
+psql -d postgres -qc "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='$TARGET' AND pid <> pg_backend_pid()" >/dev/null
+dropdb --if-exists "$TARGET"
+createdb "$TARGET"
+pg_restore --no-owner -d "$TARGET" "$SRC/odoo.dump"
+
+rm -rf "$DATA_DIR/filestore/$TARGET"
+if [ -f "$SRC/filestore.tar.gz" ]; then
+    mkdir -p "$DATA_DIR/filestore/$TARGET"
+    # archive root is the source DB name; strip it so restoring under a new name works
+    tar -C "$DATA_DIR/filestore/$TARGET" --strip-components=1 -xzf "$SRC/filestore.tar.gz"
+fi
+
+if [ "$TARGET" != "$(awk -F= '/^db=/{print $2}' "$SRC/meta.txt" 2>/dev/null)" ]; then
+    # restored under a different name: give it a new uuid so it isn't confused with the original
+    psql -d "$TARGET" -qc "UPDATE ir_config_parameter SET value = gen_random_uuid()::text WHERE key = 'database.uuid'"
+fi
+echo "Restored. Code at backup time: $(awk -F= '/^git=/{print $2}' "$SRC/meta.txt" 2>/dev/null)"

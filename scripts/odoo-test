@@ -1,0 +1,21 @@
+#!/bin/bash
+# Run a module's tests in a throwaway database (never touches the dev DB).
+# Usage: odoo-test <module> [--keep]     --keep leaves the test DB for inspection
+source "$(dirname "$0")/_lib.sh"
+MOD="${1:?usage: odoo-test <module> [--keep]}"
+TEST_DB="${DB_NAME}_test_${MOD}"
+KEEP="${2:-}"
+
+dropdb --if-exists "$TEST_DB"
+rm -rf "$DATA_DIR/filestore/$TEST_DB"
+set +e
+odoo -d "$TEST_DB" -i "$MOD" --test-tags "/$MOD" --stop-after-init --no-http \
+     --http-port 8079 --gevent-port 8078 --log-level=test
+RC=$?
+set -e
+if [ "$KEEP" != "--keep" ]; then
+    dropdb --if-exists "$TEST_DB"
+    rm -rf "$DATA_DIR/filestore/$TEST_DB"
+fi
+[ $RC -eq 0 ] && echo "Tests for $MOD passed." || echo "Tests for $MOD FAILED (exit $RC)."
+exit $RC

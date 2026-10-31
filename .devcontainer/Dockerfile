@@ -32,8 +32,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # PDF generation
     fonts-liberation \
     fonts-dejavu \
-    # PostgreSQL client
-    postgresql-client \
+    gnupg \
+    ca-certificates \
     # Git
     git \
     # Other utilities
@@ -41,6 +41,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     xz-utils \
     && rm -rf /var/lib/apt/lists/*
+
+# PostgreSQL client must match the server major version (db service = pg16),
+# otherwise pg_dump refuses to run (scripts/db-backup depends on it).
+ARG PG_MAJOR=16
+RUN install -d /usr/share/postgresql-common/pgdg && \
+    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc && \
+    echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+    apt-get update && apt-get install -y --no-install-recommends postgresql-client-${PG_MAJOR} && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install wkhtmltopdf 0.12.6 with patched qt (required for headers/footers)
 # Detect architecture and install appropriate package

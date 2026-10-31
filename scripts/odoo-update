@@ -1,0 +1,10 @@
+#!/bin/bash
+# Upgrade module(s) in the dev DB (runs migrations/, reloads data & views).
+# Snapshots the DB first. This is THE way to apply schema/data changes.
+# Usage: odoo-update mod1[,mod2] [extra odoo-bin args]     (use 'all' for everything)
+source "$(dirname "$0")/_lib.sh"
+MODS="${1:?usage: odoo-update mod1[,mod2]|all}"; shift
+warn_if_server_running
+"$(dirname "$0")/db-backup" "pre-update-${MODS//,/+}"
+odoo -d "$DB_NAME" -u "$MODS" --stop-after-init --no-http "$@"
+echo "Updated $MODS. Restart the server (odoo-start)."

@@ -1,4 +1,5 @@
 #!/bin/bash
-cd /workspace
-source /workspace/.venv/bin/activate
-python /workspace/odoo/odoo-bin shell -d odoo --db_host=db --db_user=odoo --db_password=odoo "$@"
+# Interactive Odoo shell (env, self, ...). Changes are NOT committed unless you
+# call env.cr.commit() - prefer module code/migrations for anything permanent.
+source "$(dirname "$0")/_lib.sh"
+odoo shell -d "$DB_NAME" --no-http "$@"

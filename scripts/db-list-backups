@@ -1,0 +1,7 @@
+#!/bin/bash
+# List snapshots, newest first, with the git revision they were taken at.
+source "$(dirname "$0")/_lib.sh"
+[ -d "$BACKUP_ROOT" ] || { echo "no backups yet"; exit 0; }
+for d in $(ls -1dr "$BACKUP_ROOT"/*/ 2>/dev/null); do
+    printf "%-45s %6s  %s\n" "$(basename "$d")" "$(du -sh "$d" | cut -f1)" "$(awk -F= '/^git=/{print "git="$2}' "$d/meta.txt" 2>/dev/null)"
+done

@@ -1,4 +1,12 @@
 #!/bin/bash
-cd /workspace
-source /workspace/.venv/bin/activate
-python /workspace/odoo/odoo-bin scaffold "$@"
+# Create a new custom module from the QuickBite template.
+# Usage: odoo-scaffold <module_name>   (e.g. quickbite_menu)
+source "$(dirname "$0")/_lib.sh"
+
+NAME="${1:?usage: odoo-scaffold <module_name>}"
+DEST="$WORKSPACE/custom-addons/$NAME"
+[ -e "$DEST" ] && { echo "error: $DEST already exists" >&2; exit 1; }
+
+python "$ODOO_BIN" scaffold -t "$WORKSPACE/templates/module" "$NAME" "$WORKSPACE/custom-addons"
+echo "Created $DEST"
+echo "Next: edit __manifest__.py, then 'odoo-install $NAME' and commit."

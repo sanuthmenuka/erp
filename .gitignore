@@ -27,3 +27,4 @@ odoo.local.conf
 # OS
 .DS_Store
 Thumbs.db
+.odoo-data/
