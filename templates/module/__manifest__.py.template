@@ -1,0 +1,15 @@
+{
+    'name': '{{ name|replace("_", " ")|title }}',
+    'summary': 'TODO: one-line summary',
+    'author': 'QuickBite',
+    'category': 'Sales/Restaurant',
+    # Bump on every change to models/data/views; add migrations/<version>/ when data must change.
+    'version': '19.0.1.0.0',
+    'depends': ['quickbite_base'],
+    'data': [
+        'security/ir.model.access.csv',
+        'views/views.xml',
+    ],
+    'installable': True,
+    'license': 'LGPL-3',
+}

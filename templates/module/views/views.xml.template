@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Attach menus under quickbite_base.menu_quickbite_root / quickbite_base.menu_quickbite_config -->
+</odoo>

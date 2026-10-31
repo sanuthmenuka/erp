@@ -1,4 +1,4 @@
 # Dev-only tools (Odoo's own deps come from odoo/requirements.txt)
 watchdog==6.0.0      # enables dev_mode=reload (auto-restart on .py change)
 pre-commit==4.3.0
-ruff==0.13.3
+ruff==0.16.1

@@ -1,0 +1,9 @@
+# Lint our code with the same rules Odoo core uses (odoo/ruff.toml is generated
+# by Odoo's runbot). Only custom-addons/ is linted; core and third-party are not ours.
+extend = "odoo/ruff.toml"
+include = ["custom-addons/**/*.py", "templates/**/*.py"]
+extend-exclude = ["odoo", "third-party", ".venv"]
+
+[lint.per-file-ignores]
+# Odoo convention: one `from . import x` per line in __init__.py (keeps diffs clean)
+"**/__init__.py" = ["F401", "I001"]

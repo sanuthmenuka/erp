@@ -1,0 +1,23 @@
+#!/bin/bash
+# pre-commit hook: if staged changes touch a module's models/views/data/security
+# but its __manifest__.py version did not change, warn and fail. Without a bump,
+# `odoo-update` won't run migrations and the change isn't traceable to a version.
+# Bypass for docs/test-only changes with: SKIP=manifest-version-bumped git commit ...
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+fail=0
+for mod in $(git diff --cached --name-only -- custom-addons | cut -d/ -f2 | sort -u); do
+    manifest="custom-addons/$mod/__manifest__.py"
+    [ -f "$manifest" ] || continue
+    # newly added module: nothing to compare
+    git cat-file -e "HEAD:$manifest" 2>/dev/null || continue
+    if git diff --cached --name-only -- "custom-addons/$mod" | grep -qE '/(models|views|data|security|wizard|report)/|\.py$' ; then
+        old=$(git show "HEAD:$manifest" | grep -oE "'version': *'[^']+'" || true)
+        new=$(grep -oE "'version': *'[^']+'" "$manifest" || true)
+        if [ "$old" = "$new" ]; then
+            echo "✗ $mod changed but $manifest version is still ${new#*: } - bump it (and add migrations/ if data changes)."
+            fail=1
+        fi
+    fi
+done
+exit $fail

@@ -1,0 +1,30 @@
+# Installed by .devcontainer/post-create.sh (`pre-commit install`).
+# Run manually: pre-commit run --all-files
+exclude: ^(odoo|third-party)/
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-xml
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--maxkb=1024]
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: debug-statements
+  - repo: local
+    hooks:
+      # Uses the ruff pinned in requirements-dev.txt (single source of truth).
+      - id: ruff
+        name: ruff (Odoo rules)
+        entry: ruff check --force-exclude
+        language: system
+        types: [python]
+        files: ^custom-addons/
+      - id: manifest-version-bumped
+        name: manifest version bumped when module changes
+        entry: scripts/check-version-bump
+        language: system
+        pass_filenames: false
+        files: ^custom-addons/
