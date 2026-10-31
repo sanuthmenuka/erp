@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_quickbite_outlet_user,quickbite.outlet user,model_quickbite_outlet,group_quickbite_user,1,0,0,0
+access_quickbite_outlet_manager,quickbite.outlet manager,model_quickbite_outlet,group_quickbite_manager,1,1,1,1
+access_quickbite_outlet_setting_user,quickbite.outlet.setting user,model_quickbite_outlet_setting,group_quickbite_user,1,0,0,0
+access_quickbite_outlet_setting_manager,quickbite.outlet.setting manager,model_quickbite_outlet_setting,group_quickbite_manager,1,1,1,1

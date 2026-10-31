@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root app menu. Feature modules (quickbite_menu, quickbite_order, ...)
+         attach their menus under menu_quickbite_root / menu_quickbite_config. -->
+    <menuitem id="menu_quickbite_root" name="QuickBite" sequence="10"
+              groups="group_quickbite_user" web_icon="quickbite_base,static/description/icon.png"/>
+
+    <menuitem id="menu_quickbite_config" name="Configuration" parent="menu_quickbite_root"
+              sequence="100" groups="group_quickbite_manager"/>
+
+    <menuitem id="menu_quickbite_outlet" name="Outlets" parent="menu_quickbite_config"
+              action="quickbite_outlet_action" sequence="10"/>
+</odoo>
