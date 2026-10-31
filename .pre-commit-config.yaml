@@ -18,7 +18,7 @@ repos:
       # Uses the ruff pinned in requirements-dev.txt (single source of truth).
       - id: ruff
         name: ruff (Odoo rules)
-        entry: ruff check --force-exclude
+        entry: /workspace/.venv/bin/ruff check --force-exclude
         language: system
         types: [python]
         files: ^custom-addons/

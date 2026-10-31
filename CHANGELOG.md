@@ -9,4 +9,4 @@ Module-level changes are in `custom-addons/<module>/CHANGELOG.md`.
 - Snapshot-first DB scripts (`db-backup`, `db-restore`, `odoo-install`, `odoo-update`, `odoo-test`).
 - `quickbite_base` module (outlets, order-type settings, security groups).
 - ruff (Odoo rules) + pre-commit, module template.
-- Pre-change DB snapshot: `db/backups/20261031-105026-pre-restructure`.
+- Pre-change DB snapshot: `db/backups/20261031-052026Z-pre-restructure`.

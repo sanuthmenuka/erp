@@ -12,4 +12,4 @@
    machine if they matter. Each snapshot = `odoo.dump` (pg_dump -Fc), `filestore.tar.gz`,
    `installed_modules.txt`, `meta.txt` (git commit, Odoo core commit, date).
 
-Snapshot `20261031-105026-pre-restructure` is the state before this repo was set up.
+Snapshot `20261031-052026Z-pre-restructure` is the state before this repo was set up.

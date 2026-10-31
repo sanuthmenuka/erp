@@ -6,7 +6,7 @@ source "$(dirname "$0")/_lib.sh"
 
 LABEL="${1:-manual}"
 LABEL="$(echo "$LABEL" | tr -c 'A-Za-z0-9_.-' '-' | sed 's/-*$//')"
-DIR="$BACKUP_ROOT/$(date +%Y%m%d-%H%M%S)-$LABEL"
+DIR="$BACKUP_ROOT/$(date -u +%Y%m%d-%H%M%SZ)-$LABEL"   # UTC, so names sort chronologically
 
 db_exists "$DB_NAME" || { echo "error: database '$DB_NAME' does not exist" >&2; exit 1; }
 
@@ -33,7 +33,7 @@ psql -d "$DB_NAME" -tAc "SELECT name || ' ' || coalesce(latest_version,'') FROM 
 cat > "$DIR/meta.txt" <<META
 db=$DB_NAME
 label=$LABEL
-created=$(date -Iseconds)
+created=$(date -u -Iseconds)
 git=$(git_rev) ($(git_dirty))
 odoo_core=$(git -C "$WORKSPACE/odoo" rev-parse --short HEAD 2>/dev/null || echo unknown)
 META

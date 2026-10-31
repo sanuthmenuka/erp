@@ -57,7 +57,7 @@ Odoo has no "down" migrations, so a rollback = **code revert + DB restore**:
 ```bash
 db-list-backups                       # find the snapshot taken before the change (pre-update-<module>)
 git revert <commit>                   # or: git checkout <git hash shown in that snapshot's meta.txt>
-db-restore 20261031-120000-pre-update-quickbite_base
+db-restore 20261031-120000Z-pre-update-quickbite_base
 odoo-start
 ```
 
