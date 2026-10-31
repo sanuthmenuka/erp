@@ -1,0 +1,4 @@
+#!/bin/bash
+cd /workspace
+source /workspace/.venv/bin/activate
+python /workspace/odoo/odoo-bin scaffold "$@"

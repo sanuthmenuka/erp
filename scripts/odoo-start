@@ -1,0 +1,13 @@
+#!/bin/bash
+cd /workspace
+source /workspace/.venv/bin/activate
+
+# Check if database is initialized
+DB_INITIALIZED=$(PGPASSWORD=odoo psql -h db -U odoo -d odoo -tAc "SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name='ir_module_module')" 2>/dev/null || echo "f")
+
+if [ "$DB_INITIALIZED" = "t" ]; then
+    python /workspace/odoo/odoo-bin -d odoo --db_host=db --db_user=odoo --db_password=odoo "$@"
+else
+    echo "Database not initialized. Installing base module..."
+    python /workspace/odoo/odoo-bin -d odoo --db_host=db --db_user=odoo --db_password=odoo -i base "$@"
+fi

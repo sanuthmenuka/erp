@@ -1,0 +1,29 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+
+# Odoo runtime
+*.log
+filestore/
+enterprise/
+
+# Local DB snapshots (large, may contain real data) - see db/README.md
+db/backups/
+
+# Local overrides
+odoo.local.conf
+.env
+
+# IDE
+.idea/
+.vscode/*
+!.vscode/launch.json
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
